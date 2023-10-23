@@ -57,7 +57,7 @@ def send_message_to_telegram(m):
 
 def proceed_to_registration(drv):
     proceed_but = drv.find_element("xpath",
-                                  "/html/body/app-root/div/div/app-eligibility-criteria/section/form/mat-card[2]/button")
+                                   "/html/body/app-root/div/div/app-eligibility-criteria/section/form/mat-card[2]/button")
     proceed_but.click()
     logging.info("Proceed to registration")
     sleep(LONG_TIMEOUT)
@@ -67,6 +67,14 @@ def choose_new_visit(drv):
     app_but = drv.find_element("xpath", "/html/body/app-root/div/div/app-dashboard/section[1]/div/div[2]/div/button")
     app_but.click()
     logging.info("Chose new visit")
+
+
+def find_availability_msg(drv):
+    try:
+        return drv.find_element("xpath", "//*[text()[contains(.,'нет доступных слотов')]]")
+    except NoSuchElementException:
+        logging.info("There may be some good news...")
+    return drv.find_element("xpath", "//*[text()[contains(.,'Самый ранний доступный слот')]]")
 
 
 # -------------------------------------start of the bot----------------------------------------------------------------
@@ -110,11 +118,11 @@ while driver.current_url == current_url:
     sleep(SHORT_TIMEOUT)
 sleep(LOAD_PAGE_TIMEOUT)
 
-
 try:
     run_with_retry(choose_new_visit, driver)
     sleep(LONG_TIMEOUT)
     # first round of inputs
+    # example Poland Visa Application Center-Grodno,Poland Visa Application Center-Lida
     vc = choose_visa_center()
     selection_func(driver, vc)
 except NoSuchElementException as e:
@@ -131,9 +139,7 @@ while True:
     sleep(SHORT_TIMEOUT)
     # spot error message
     try:
-        error_msg = driver.find_element(By.XPATH,
-                                        "/html/body/app-root/div/div/app-eligibility-criteria/section/form/mat-card[1]/form/div[6]/div")
-
+        error_msg = find_availability_msg(driver)
         if "нет доступных слотов" in error_msg.text:
             logging.info("No good news yet...")
             nvc = choose_visa_center()
