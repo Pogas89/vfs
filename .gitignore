@@ -1,0 +1,4 @@
+app.properties
+*.log
+.idea
+inp.txt

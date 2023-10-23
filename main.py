@@ -85,8 +85,10 @@ set_global_properties('app.properties')
 # check if telegram credentials are provided
 if not (telegram_token or telegram_chatid):
     telegram_enabled = False
-    logging.info("- Alert! No Telegram credentials were provided. Messages will only be printed in the prompt.")
-
+    logging.info("- Alert! No Telegram credentials were provided. Messages will only be printed in the log.")
+if telegram_enabled:
+    message = "Bot started..."
+    send_message_to_telegram(message)
 # access website
 driver = webdriver.Chrome()
 driver.maximize_window()
@@ -141,7 +143,7 @@ while True:
 
         else:
             if "Самый ранний доступный слот" in error_msg.text:
-                logging.info("There may be some good news: {}".format(error_msg.text))
+                logging.warning("There may be some good news: {}".format(error_msg.text))
 
                 # send telegram message
                 if telegram_enabled:
