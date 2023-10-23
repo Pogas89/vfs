@@ -122,6 +122,7 @@ try:
     run_with_retry(choose_new_visit, driver)
     sleep(LONG_TIMEOUT)
     # first round of inputs
+    # example Poland Visa Application Center-Grodno,Poland Visa Application Center-Lida
     vc = choose_visa_center()
     selection_func(driver, vc)
 except NoSuchElementException as e:
